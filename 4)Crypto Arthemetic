@@ -1,0 +1,27 @@
+from itertools import permutations
+
+def is_valid_solution(s, m, o, r, e, n, d, y):
+    return (1000 * s + 100 * e + 10 * n + d) + \
+           (1000 * m + 100 * o + 10 * r + e) == \
+           (10000 * m + 1000 * o + 100 * n + 10 * e + y)
+
+def solve_crypt_arithmetic():
+    letters = 'SENDMORY'  
+    digits = range(10)    
+
+    for perm in permutations(digits, len(letters)):
+        s, e, n, d, m, o, r, y = perm
+        if s == 0 or m == 0:
+            continue
+        if is_valid_solution(s, m, o, r, e, n, d, y):
+            print("SEND =", 1000 * s + 100 * e + 10 * n + d)
+            print("MORE =", 1000 * m + 100 * o + 10 * r + e)
+            print("MONEY =", 10000 * m + 1000 * o + 100 * n + 10 * e + y)
+            print("Solution found:")
+            print(f"S = {s}, E = {e}, N = {n}, D = {d}, M = {m}, O = {o}, R = {r}, Y = {y}")
+            return
+
+    print("No solution found.")
+
+if __name__ == "__main__":
+    solve_crypt_arithmetic()
