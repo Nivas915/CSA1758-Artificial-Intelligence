@@ -1,0 +1,27 @@
+def solve_nq(n):
+    def is_v(b, r, c):
+        for i in range(r):
+            if b[i] == c or b[i] - i == c - r or b[i] + i == c + r:
+                return False
+        return True
+
+    def slv(b, r):
+        if r == n:
+            rs.append(b[:])
+            return
+        for c in range(n):
+            if is_v(b, r, c):
+                b[r] = c
+                slv(b, r + 1)
+
+    rs = []
+    slv([-1] * n, 0)
+    return rs
+
+n = int(input("Enter the size of the board: "))
+sol = solve_nq(n)
+l=len(sol)
+print("Number of solutions: ",l)
+print("Possible Solutions: ")
+for sol in sol:
+    print(sol)
