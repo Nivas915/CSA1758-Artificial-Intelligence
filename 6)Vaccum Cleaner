@@ -1,0 +1,42 @@
+import random
+class Room:
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+        self.grid = [[random.choice(['clean', 'dirty']) for _ in range(width)] for _ in range(height)]
+    def display(self):
+        for row in self.grid:
+            print(' '.join(row))
+        print()
+class VacuumCleaner:
+    def __init__(self, room):
+        self.room = room
+        self.x = 0
+        self.y = 0
+    def clean(self):
+        if self.room.grid[self.y][self.x] == 'dirty':
+            self.room.grid[self.y][self.x] = 'clean'
+            print(f"Cleaned cell ({self.x}, {self.y})")
+    def move(self):
+        moves = ['left', 'right', 'up', 'down']
+        move = random.choice(moves)
+        if move == 'left' and self.x > 0:
+            self.x -= 1
+        elif move == 'right' and self.x < self.room.width - 1:
+            self.x += 1
+        elif move == 'up' and self.y > 0:
+            self.y -= 1
+        elif move == 'down' and self.y < self.room.height - 1:
+            self.y += 1
+        print(f"Moved {move} to ({self.x}, {self.y})")
+width = 5
+height = 5
+room = Room(width, height)
+vacuum = VacuumCleaner(room)
+print("Initial room state:")
+room.display()
+steps = 20
+for _ in range(steps):
+    vacuum.clean()
+    vacuum.move()
+    room.display()
