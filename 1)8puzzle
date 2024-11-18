@@ -1,0 +1,87 @@
+import heapq
+
+class Puzzle:
+    def __init__(self, board, goal, moves=0, path=None):
+        self.board = board
+        self.goal = goal
+        self.n = len(board)
+        self.blank = self.find_blank()
+        self.moves = moves
+        self.path = path if path else []
+
+    def find_blank(self):
+        for i in range(self.n):
+            for j in range(self.n):
+                if self.board[i][j] == 0:
+                    return (i, j)
+
+    def is_solved(self):
+        return self.board == self.goal
+
+    def get_neighbors(self):
+        neighbors = []
+        x, y = self.blank
+        directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+        for dx, dy in directions:
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < self.n and 0 <= ny < self.n:
+                new_board = [row[:] for row in self.board]
+                new_board[x][y], new_board[nx][ny] = new_board[nx][ny], new_board[x][y]
+                new_path = self.path + [new_board]
+                neighbors.append(Puzzle(new_board, self.goal, self.moves + 1, new_path))
+        return neighbors
+
+    def manhattan_distance(self):
+        distance = 0
+        for i in range(self.n):
+            for j in range(self.n):
+                if self.board[i][j] != 0:
+                    x, y = divmod(self.board[i][j] - 1, self.n)
+                    distance += abs(x - i) + abs(y - j)
+        return distance
+
+    def __lt__(self, other):
+        return self.manhattan_distance() < other.manhattan_distance()
+
+def solve_8_puzzle(start, goal):
+    pq = []
+    heapq.heappush(pq, (0, start))
+    visited = set()
+    visited.add(tuple(map(tuple, start.board)))
+
+    while pq:
+        cost, current = heapq.heappop(pq)
+        if current.is_solved():
+            return current.moves, current.path
+        for neighbor in current.get_neighbors():
+            if tuple(map(tuple, neighbor.board)) not in visited:
+                visited.add(tuple(map(tuple, neighbor.board)))
+                heapq.heappush(pq, (neighbor.moves + neighbor.manhattan_distance(), neighbor))
+    return -1, []
+
+def get_default_input():
+    return [
+        [1, 8, 3],
+        [4, 6, 5],
+        [7, 2, 0]
+    ]
+
+start_board = get_default_input()
+goal_board = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8]
+]
+
+start = Puzzle(start_board, goal_board)
+moves, path = solve_8_puzzle(start, start.goal)
+
+if moves != -1:
+    print(f"Solved in {moves} moves. Steps:")
+    for i, p in enumerate(path, 1):
+        print(f"Step {i}:")
+        for row in p:
+            print(row)
+        print()
+else:
+    print("No solution exists.")
